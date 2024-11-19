@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="fishbot_ros2_control">
+    <ros2_control name="FishBotGazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="left_wheel_joint">
+                <command_interface name="velocity">
+                    <param name="min">-2</param>
+                    <param name="max">2</param>
+                </command_interface>
+                <command_interface name="effort">
+                    <param name="min">-0.1</param>
+                    <param name="max">0.1</param>
+                </command_interface>
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+            </joint>
+            <joint name="right_wheel_joint">
+                <command_interface name="velocity">
+                    <param name="min">-2</param>
+                    <param name="max">2</param>
+                </command_interface>
+                <command_interface name="effort">
+                    <param name="min">-0.1</param>
+                    <param name="max">0.1</param>
+                </command_interface>
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+            </joint>
+        </ros2_control>
+        <gazebo>
+            <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+                <parameters>$(find fishbot_description)/config/fishbot_ros2_controller.yaml</parameters>
+                <ros>
+                    <remapping>/fishbot_diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
+                    <remapping>/fishbot_diff_drive_controller/odom:=/odom</remapping>
+                </ros>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+</robot>
+
+<!--这个文件中共定义了4个用于控制的命令接口
+    而.yaml文件中对控制器的类型与参数进行了定义-->
+
+<!--command_interfaces
+    定义：command_interfaces 是控制器用来发送指令到硬件的接口。这些接口定义了控制器可以发送给硬件的命令类型，例如位置、速度或力（effort）。
+    功能：控制器通过这些接口设置硬件的期望状态。例如，一个位置控制器会通过position命令接口发送期望的关节位置。
+    举例：对于差速驱动控制器，velocity命令接口用于发送左右轮子的速度指令。
+    
+    state_interfaces
+    定义：state_interfaces 是控制器用来从硬件接收状态的接口。这些接口定义了控制器可以从硬件读取的状态类型，通常包括位置、速度、加速度、力等。
+    功能：控制器通过这些接口获取硬件的实际状态，以便进行反馈控制。例如，一个位置控制器需要知道关节的实际位置来调整其输出，以保持关节在期望的位置。
+    举例：对于关节状态广播器，position和velocity状态接口用于读取关节的实际位置和速度。-->
